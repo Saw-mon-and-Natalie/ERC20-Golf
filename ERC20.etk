@@ -3,18 +3,20 @@
 
 %import("macros/instructions.etk")
 
-%include("Constructor.etk")
+# %import("Constructor.etk")
 
 # storage slots
 # 0: maping(address => uint256) balanceOf
-# 1: mapping(address => mapping(address => bool)) isApprovedAll
+# 1: mapping(address => mapping(address => uint256)) allowance
 
-%import("functions/totalSupply.etk")
-%import("functions/balanceOf.etk")
-%import("functions/transfer.etk")
-%import("functions/transferFrom.etk")
-%import("functions/approve.etk")
-%import("functions/allowance.etk")
+%import("function_selector.etk")
+                                                # 4 byte sig
+%import("functions/totalSupply.etk")            # 0x18160ddd
+%import("functions/balanceOf.etk")              # 0x70a08231
+%import("functions/transfer.etk")               # 0xa9059cbb
+%import("functions/transferFrom.etk")           # 0x23b872dd
+%import("functions/approve.etk")                # 0x095ea7b3
+%import("functions/allowance.etk")              # 0xdd62ed3e
 
 # optional
 # %import("functions/name.etk")
@@ -24,10 +26,9 @@
 # %import("functions/_mint.etk")
 # %import("functions/_burn.etk")
 
-success:
+returnValue:
     jumpdest
 
-    push1 1
     returndatasize
     mstore
 

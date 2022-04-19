@@ -3,24 +3,20 @@ approve:
     jumpdest
 
     # spender
-    push1 4
-    calldataload                    # to
-
-    # amount
-    push1 4 + 32
-    calldataload                    # amount, to
+    %calldata_param(0)              # to
+    %calldata_param(1)              # amount, to
 
     # save amount to memory to for log3 data value
-    dup1
-    returndatasize
-    mstore
-
-    dup2                            # to, amount, to
+    dup1                            # amount, amount ,to
+    dup3                            # to, amount, amount, to
 
     caller
-    %allowance_slot()               # a.sid, amount, to
+    %allowance_slot()               # a.sid, amount, amount, to
 
-    sstore                          # to
+    sstore                          # amount, to
+
+    returndatasize
+    mstore                          # to
 
 
     caller
@@ -30,5 +26,6 @@ approve:
     returndatasize
     log3
 
+    push1 1
+    %push(returnValue)
     jump
-

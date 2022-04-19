@@ -20,10 +20,10 @@ balanceOfSlot:
 
     # storage slot 0
     returndatasize
-    push1 0x20
+    msize
     mstore
 
-    push1 0x40
+    msize
     returndatasize
     keccak256
     

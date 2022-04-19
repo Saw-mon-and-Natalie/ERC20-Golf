@@ -1,6 +1,6 @@
 decimals:
     jumpdest
-    push1 18
+    %decimals()
     returndatasize
     mstore
 

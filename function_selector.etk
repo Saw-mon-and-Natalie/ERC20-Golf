@@ -1,0 +1,41 @@
+# entry point check
+
+returndatasize
+calldataload
+returndatasize
+byte                                            # 1st byte of calldata
+
+dup1
+push1 0x18
+eq
+%push(totalSupply)
+jumpi
+
+dup1
+push1 0x70
+eq
+%push(balanceOf)
+jumpi
+
+dup1
+push1 0xa9
+eq
+%push(transfer)
+jumpi
+
+dup1
+push1 0x23
+eq
+%push(transferFrom)
+jumpi
+
+dup1
+push1 0x09
+eq
+%push(approve)
+jumpi
+
+push1 0xdd
+eq
+%push(allowance)
+jumpi

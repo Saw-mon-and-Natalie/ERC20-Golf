@@ -2,17 +2,9 @@
 transferFrom:
     jumpdest
 
-    # amount
-    push1 4 + 32 + 32
-    calldataload                    # amount, return_pc
-
-    # to
-    push1 4 + 32
-    calldataload                    # to, amount, return_pc
-
-    # from
-    push1 4
-    calldataload                    # from, to, amount, return_pc
+    %calldata_param(2)              # amount, return_pc
+    %calldata_param(1)              # to, amount, return_pc
+    %calldata_param(0)              # from, to, amount, return_pc
 
     caller
     dup2
@@ -35,5 +27,5 @@ transferFrom:
     sstore                          # from, to, amount, return_pc
 
     %push(transferInternal)
-    jump
+    # jump
 

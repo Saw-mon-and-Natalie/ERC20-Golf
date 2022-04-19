@@ -2,13 +2,8 @@
 transfer:                                       # stack after opcode is executed
     jumpdest
 
-    # amount
-    push1 4 + 32
-    calldataload                                # amount, return_pc
-
-    # to
-    push1 4
-    calldataload                                # to, amount, return_pc
+    %calldata_param(1)                          # amount, return_pc
+    %calldata_param(0)                          # to, amount, return_pc
 
     caller
     %push(transferInternal)
@@ -18,9 +13,14 @@ transfer:                                       # stack after opcode is executed
 transferInternal:
     jumpdest
 
-    dup1
-    %balance_of_slot()                          # f.sid, from, to, amount, return_pc
-
+    %push(transferInternalPart1)
+    dup2
+    %push(balanceOfSlot) 
+    jump                         
+    
+# f.sid, from, to, amount, return_pc
+transferInternalPart1:
+    jumpdest
     dup4                                        # amount, f.sid, from, to, amount, return_pc
 
     # balanceOf[from] 
@@ -37,11 +37,16 @@ transferInternal:
     sub                                         # balanceOf[from] - amount, f.sid, from, to, amount, return_pc
     dup2                                        # f.sid, balanceOf[from] - amount, f.sid, from, to, amount, return_pc
     sstore                                      # f.sid, from, to, amount, return_pc
-
-
-    dup3                                        # to, f.sid, from, to, amount, return_pc
-    %balance_of_slot()                          # to.sid, f.sid, from, to, amount, return_pc
+                                    
+    %push(transferInternalPart2)                # xxxx, f.sid, from, to, amount, return_pc
+    dup4                                        # to, xxxx, f.sid, from, to, amount, return_pc
+    %push(balanceOfSlot) 
+    jump                          
     
+# to.sid, f.sid, from, to, amount, return_pc
+transferInternalPart2:
+    jumpdest
+
     dup1                                        # to.sid, to.sid, f.sid, from, to, amount, return_pc
     sload                                       # balanceOf[to], to.sid, f.sid, from, to, amount, return_pc
 
@@ -61,6 +66,7 @@ transferInternal:
     returndatasize
     log3                                        # f.sid, return_pc
 
-    pop                                         # return_pc
+    push1 1
+    %push(returnValue)
     jump
 

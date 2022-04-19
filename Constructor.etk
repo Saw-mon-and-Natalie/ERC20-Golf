@@ -1,9 +1,26 @@
 # set up storage here
+# send totalSupply to msg.sender
 
+%import("macros/instructions.etk")
+
+%total_supply()
+caller
+returndatasize
+mstore
+
+# storage slot 0
+returndatasize
+msize
+mstore
+
+msize
+returndatasize
+keccak256
+sstore
 
 # universal constructor - 60XX5981380380925939f3
 %push(initBytecode)
-msize
+returndatasize
 
 # size of init bytecode
 dup2
@@ -12,10 +29,12 @@ sub
 
 dup1
 swap3
-msize
+returndatasize
 codecopy
 return
 
 initBytecode:
 
 # your init bytecode
+
+%include("ERC20.etk")

@@ -1,9 +1,6 @@
 totalSupply:
     jumpdest
     %total_supply()
-    returndatasize
-    mstore
-
-    push1 0x20
-    returndatasize
-    return
+    
+    %push(returnValue)
+    jump
