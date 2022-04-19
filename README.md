@@ -8,6 +8,12 @@
 > 
 > Smallest bytecode fully compliant ERC20 implementation.
 
+Deployed contract on Rinkeby: [`0xf8B33db61c072264bEBB1333c8064BA43C3a6347`](https://rinkeby.etherscan.io/address/0xf8b33db61c072264bebb1333c8064ba43c3a6347)
+
+|bytecode|deployed bytecode|
+|---|---|
+|360 bytes| 337 bytes|
+
 ## Notes
 - event topics are not stored in storage for gas optimization
 - storage is only used for balances and allowances
