@@ -3,8 +3,6 @@
 
 %import("macros/instructions.etk")
 
-# %import("Constructor.etk")
-
 # storage slots
 # 0: maping(address => uint256) balanceOf
 # 1: mapping(address => mapping(address => uint256)) allowance
