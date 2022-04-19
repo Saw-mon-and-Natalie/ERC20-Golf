@@ -1,0 +1,21 @@
+                                    # stack
+allowance:
+    jumpdest
+
+    push1 4 + 32
+    calldataload                    # spender
+
+    push1 4
+    calldataload                    # owner, spender
+
+    %allowance_slot()               # a.sid
+    sload
+
+    returndatasize
+    mstore
+
+    push1 0x20
+    returndatasize
+    return
+
+    

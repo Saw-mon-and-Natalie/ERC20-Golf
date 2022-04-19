@@ -1,0 +1,45 @@
+# stack: address
+# takes 1, returns 1
+%macro balance_of_slot()
+    returndatasize
+    mstore
+
+    # storage slot 0
+    returndatasize
+    push1 0x20
+    mstore
+
+    push1 0x40
+    returndatasize
+    keccak256
+%end
+
+# stack: owner, spender
+# takes 1, returns 1
+%macro allowance_slot()
+    returndatasize
+    mstore
+
+    # storage slot 1
+    msize
+    push1 0x20
+    mstore
+
+    push1 0x40
+    returndatasize
+    keccak256
+
+    push1 0x20
+    mstore
+
+    returndatasize
+    mstore
+
+    push1 0x40
+    returndatasize
+    keccak256
+%end
+
+%macro total_supply()
+    pc
+%end

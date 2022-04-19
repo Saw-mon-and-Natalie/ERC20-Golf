@@ -1,0 +1,9 @@
+symbol:
+    jumpdest
+    push3 0x45564d    # EVM in bytes
+    returndatasize
+    mstore
+
+    push1 3
+    returndatasize
+    return

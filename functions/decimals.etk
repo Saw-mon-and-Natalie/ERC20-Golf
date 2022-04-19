@@ -1,0 +1,9 @@
+decimals:
+    jumpdest
+    push1 18
+    returndatasize
+    mstore
+
+    msize
+    returndatasize
+    return

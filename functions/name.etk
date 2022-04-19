@@ -1,0 +1,9 @@
+name:
+    jumpdest
+    push3 0x65766d    # evm in bytes
+    returndatasize
+    mstore
+
+    push1 3
+    returndatasize
+    return

@@ -1,0 +1,21 @@
+# set up storage here
+
+
+# universal constructor - 60XX5981380380925939f3
+%push(initBytecode)
+msize
+
+# size of init bytecode
+dup2
+codesize
+sub
+
+dup1
+swap3
+msize
+codecopy
+return
+
+initBytecode:
+
+# your init bytecode

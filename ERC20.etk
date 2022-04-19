@@ -1,0 +1,43 @@
+# @author @sw0nt - Saw-mon and Natalie
+# @notice https://eips.ethereum.org/EIPS/eip-20
+
+%import("macros/instructions.etk")
+
+%include("Constructor.etk")
+
+# storage slots
+# 0: maping(address => uint256) balanceOf
+# 1: mapping(address => mapping(address => bool)) isApprovedAll
+
+%import("functions/totalSupply.etk")
+%import("functions/balanceOf.etk")
+%import("functions/transfer.etk")
+%import("functions/transferFrom.etk")
+%import("functions/approve.etk")
+%import("functions/allowance.etk")
+
+# optional
+# %import("functions/name.etk")
+# %import("functions/symbol.etk")
+# %import("functions/decimals.etk")
+
+# %import("functions/_mint.etk")
+# %import("functions/_burn.etk")
+
+success:
+    jumpdest
+
+    push1 1
+    returndatasize
+    mstore
+
+    push1 0x20
+    returndatasize
+    return
+
+error:
+    jumpdest
+
+    returndatasize
+    returndatasize
+    revert

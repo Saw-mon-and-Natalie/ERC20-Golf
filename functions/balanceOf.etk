@@ -1,0 +1,15 @@
+balanceOf:
+    jumpdest
+    
+    push1 4
+    calldataload
+
+    %balance_of_slot()
+    sload
+   
+    returndatasize
+    mstore
+
+    push1 0x20
+    returndatasize
+    return
