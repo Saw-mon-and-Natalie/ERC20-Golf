@@ -1,10 +1,38 @@
 balanceOf:
     jumpdest
+
+    %push(storeAndReturn)
     
+    # owner
     push1 4
     calldataload
 
-    %balance_of_slot()
+    %push(balanceOfSlot)
+    jump
+    
+
+# stack: address, return_pc
+balanceOfSlot:
+    jumpdest
+
+    returndatasize
+    mstore
+
+    # storage slot 0
+    returndatasize
+    push1 0x20
+    mstore
+
+    push1 0x40
+    returndatasize
+    keccak256
+    
+    swap1
+    jump
+
+storeAndReturn:
+    jumpdest
+
     sload
    
     returndatasize

@@ -1,4 +1,39 @@
+# stack: return_pc
 transferFrom:
     jumpdest
 
-    
+    # amount
+    push1 4 + 32 + 32
+    calldataload                    # amount, return_pc
+
+    # to
+    push1 4 + 32
+    calldataload                    # to, amount, return_pc
+
+    # from
+    push1 4
+    calldataload                    # from, to, amount, return_pc
+
+    caller
+    dup2
+    %allowance_slot()               # a.sid, from, to, amount, return_pc
+
+    dup1
+    sload                           # allowance, a.sid, from, to, amount, return_pc
+
+    dup1                            # allowance, allowance, a.sid, from, to, amount, return_pc
+    dup6                            # amount, allowance, allowance, a.sid, from, to, amount, return_pc
+    gt
+    %push(error)
+    jumpi                           # allowance, a.sid, from, to, amount, return_pc
+
+    dup5
+    swap1
+    sub                             # allowance - amount, a.sid, from, to, amount, return_pc
+
+    swap1
+    sstore                          # from, to, amount, return_pc
+
+    %push(transferInternal)
+    jump
+

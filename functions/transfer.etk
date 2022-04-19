@@ -1,67 +1,24 @@
-# stack final jump dest
+# stack: return_pc
 transfer:                                       # stack after opcode is executed
     jumpdest
 
-    # balanceOf[msg.sender] storage slot id
-    caller
-    %balance_of_slot()                          # m.sid
-
     # amount
     push1 4 + 32
-    calldataload                                # amount, m.sid
-
-    dup1                                        # amount, amount, m.sid
-
-    # balanceOf[msg.sender] 
-    dup3
-    sload                                       # balanceOf[msg.sender], amount, amount, m.sid
-
-    dup2                                        # amount, balanceOf[msg.sender], amount, amount, m.sid
-    dup2                                        # balanceOf[msg.sender], amount, balanceOf[msg.sender], amount, amount, m.sid
-    
-    lt
-    %push(error)
-    jumpi                                       # balanceOf[msg.sender], amount, amount, m.sid
-
-    sub                                         # balanceOf[msg.sender] - amount, amount, m.sid
-    dup3                                        # m.sid, balanceOf[msg.sender] - amount, amount, m.sid
-    sstore                                      # amount, m.sid
-
+    calldataload                                # amount, return_pc
 
     # to
     push1 4
-    calldataload                                # to, amount, m.sid
+    calldataload                                # to, amount, return_pc
 
-    dup1                                        # to, to, amount,  m.sid
-    %balance_of_slot()                          # to.sid, to, amount, m.sid
-    
-    dup1                                        # to.sid, to.sid, to, amount, m.sid
-    sload                                       # balanceOf[to], to.sid, to, amount, m.sid
-
-    dup4                                        # amount, balanceOf[to], to.sid, to, amount, m.sid
-    add                                         # amount + balanceOf[to], to.sid, to, amount, m.sid
-
-    swap1
-    sstore                                      # to, amount, m.sid
-
-    swap1                                       # amount, to, m.sid
-    returndatasize
-    mstore                                      # to, m.sid
-
-    caller                                       # msg.sender, to, sid
-    # emit Transfer(address indexed _from, address indexed _to, uint256 _value);
-    push32 topic("Transfer(address,address,uint256)")
-    push1 0x20
-    returndatasize
-    log3
-
-    pop
+    caller
+    %push(transferInternal)
     jump
 
 # stack: from, to, amount, return_pc
 transferInternal:
     jumpdest
 
+    dup1
     %balance_of_slot()                          # f.sid, from, to, amount, return_pc
 
     dup4                                        # amount, f.sid, from, to, amount, return_pc
