@@ -3,9 +3,11 @@
 %macro balance_of_slot()
     returndatasize
     mstore
+
     returndatasize
     push1 0x20
     mstore
+
     push1 0x40
     returndatasize
     keccak256
@@ -16,16 +18,20 @@
 %macro allowance_slot()
     returndatasize
     mstore
+
     msize
     push1 0x20
     mstore
+
     push1 0x40
     returndatasize
     keccak256
     push1 0x20
     mstore
+
     returndatasize
     mstore
+
     push1 0x40
     returndatasize
     keccak256
