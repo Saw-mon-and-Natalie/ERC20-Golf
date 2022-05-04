@@ -1,41 +1,54 @@
 # entry point check
+# stack: 4, 1, 0x20
+
+dup1                           # 4, 4, 1, 0x20
+push1 6                        # 6, 4, 4, 1, 0x20
 
 returndatasize
 calldataload
-returndatasize
-byte                                            # 1st byte of calldata
+push1 21 + 28 * 8
+shr
 
-dup1
-push1 0x18
-eq
-%push(totalSupply)
-jumpi
+push1 0b1011                    
+and                            # (sig >> 21) & 0b1011, 6, 4, 4, 1, 0x20  
+mod                            # ((sig >> 21) & 0b1011) % 6, 4, 4, 1, 0x20 
 
-dup1
-push1 0x70
-eq
-%push(balanceOf)
-jumpi
 
-dup1
-push1 0xa9
-eq
-%push(transfer)
-jumpi
+#               4 byte sig  ((sig >> 21) & 0b1011) % 6
+#  totalSupply: 0x18160ddd     0
+#    balanceOf: 0x70a08231     1
+#     transfer: 0xa9059cbb     2
+# transferFrom: 0x23b872dd     3
+#      approve: 0x095ea7b3     4
+#    allowance: 0xdd62ed3e     5
 
-dup1
-push1 0x23
-eq
-%push(transferFrom)
-jumpi
 
-dup1
-push1 0x09
-eq
-%push(approve)
-jumpi
+mul                             # 4 * (((sig >> 21) & 0b1011) % 6), 4, 1, 0x20  
+%push(dispatcherJumpTable)
+add
+jump
 
-push1 0xdd
-eq
-%push(allowance)
-jumpi
+dispatcherJumpTable:            # 4, 1, 0x20
+    jumpdest
+    %push(totalSupply)
+    jump
+
+    jumpdest
+    %push(balanceOf)
+    jump
+
+    jumpdest
+    %push(transfer)
+    jump
+
+    jumpdest
+    %push(transferFrom)
+    jump
+
+    jumpdest
+    %push(approve)
+    jump
+
+    jumpdest
+    %push(allowance)
+    jump

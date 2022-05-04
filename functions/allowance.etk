@@ -1,11 +1,14 @@
-                                    # stack
+# stack: 4, 1, 0x20
 allowance:
     jumpdest
 
-    %calldata_param(1)              # spender
-    %calldata_param(0)              # owner, spender
-    %allowance_slot()               # a.sid
-    sload
+    push1 0x40                      # 0x40, 4, 1, 0x20
+    dup2                            # 4, 0x40, 4, 1, 0x20
+    returndatasize                  # 0, 4, 0x40, 4, 1, 0x20
+    calldatacopy                    # 4, 1, 0x20 | memory: 000...owner 000...spender
+
+    %allowance_slot()               # a.sid, 4, 1, 0x20 | memory: 000...owner 000...spender
+    sload                           # a[..], 4, 1, 0x20 | memory: 000...owner 000...spender
 
     %push(returnValue)
     jump

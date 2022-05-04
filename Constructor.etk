@@ -3,19 +3,16 @@
 
 %import("macros/instructions.etk")
 
-%total_supply()
+push32 topic("Approval(address,address,uint256)")
+returndatasize
+sstore
+
+push32 topic("Transfer(address,address,uint256)")
+push1 1
+sstore
+
+push1 187       # runtime codesize = total_supply
 caller
-returndatasize
-mstore
-
-# storage slot 0
-returndatasize
-msize
-mstore
-
-msize
-returndatasize
-keccak256
 sstore
 
 # universal constructor - 60XX5981380380925939f3

@@ -1,72 +1,58 @@
-# stack: return_pc
+# stack: 4, 1, 0x20 
 transfer:                                       # stack after opcode is executed
     jumpdest
 
-    %calldata_param(1)                          # amount, return_pc
-    %calldata_param(0)                          # to, amount, return_pc
+    push1 36
+    calldataload                                # amount, 4, 1, 0x20 
+    dup2                                        # 4, amount, 4, 1, 0x20 
+    calldataload                                # to, amount, 4, 1, 0x20 
 
     caller
     %push(transferInternal)
     jump
 
-# stack: from, to, amount, return_pc
+# stack: from, to, amount, 4, 1, 0x20
 transferInternal:
     jumpdest
 
-    %push(transferInternalPart1)
-    dup2
-    %push(balanceOfSlot) 
-    jump                         
-    
-# f.sid, from, to, amount, return_pc
-transferInternalPart1:
-    jumpdest
-    dup4                                        # amount, f.sid, from, to, amount, return_pc
+                                                # f.sid, to, amount, 4, 1, 0x20 | f.sid = from
+    dup3                                        # amount, f.sid, to, amount, 4, 1, 0x20 | f.sid = from
+    dup2                                        # f.sid, amount, f.sid, to, amount, 4, 1, 0x20 
+    sload                                       # balanceOf[from], amount, f.sid, to, amount, 4, 1, 0x20 
+    dup2                                        # amount, balanceOf[from], amount, f.sid, to, amount, 4, 1, 0x20 
+    dup2                                        # balanceOf[from], amount, balanceOf[from], amount, f.sid, to, amount, 4, 1, 0x20
 
-    # balanceOf[from] 
-    dup2
-    sload                                       # balanceOf[from], amount, f.sid, from, to, amount, return_pc
-
-    dup2                                        # amount, balanceOf[from], amount, f.sid, from, to, amount, return_pc
-    dup2                                        # balanceOf[from], amount, balanceOf[from], amount, f.sid, from, to, amount, return_pc
-    
     lt
     %push(error)
-    jumpi                                       # balanceOf[from], amount, f.sid, from, to, amount, return_pc
+    jumpi                                       # balanceOf[from], amount, f.sid, to, amount, 4, 1, 0x20
 
-    sub                                         # balanceOf[from] - amount, f.sid, from, to, amount, return_pc
-    dup2                                        # f.sid, balanceOf[from] - amount, f.sid, from, to, amount, return_pc
-    sstore                                      # f.sid, from, to, amount, return_pc
-                                    
-    %push(transferInternalPart2)                # xxxx, f.sid, from, to, amount, return_pc
-    dup4                                        # to, xxxx, f.sid, from, to, amount, return_pc
-    %push(balanceOfSlot) 
-    jump                          
-    
-# to.sid, f.sid, from, to, amount, return_pc
-transferInternalPart2:
-    jumpdest
+    sub                                         # balanceOf[from] - amount, f.sid, to, amount, 4, 1, 0x20
+    dup2                                        # f.sid, balanceOf[from] - amount, f.sid, to, amount, 4, 1, 0x20
+    sstore                                      # f.sid, to, amount, 4, 1, 0x20
 
-    dup1                                        # to.sid, to.sid, f.sid, from, to, amount, return_pc
-    sload                                       # balanceOf[to], to.sid, f.sid, from, to, amount, return_pc
+    dup2                                        # to.sid, f.sid, to, amount, 4, 1, 0x20 | to.sid = to = balance of to storage slot
+    dup1                                        # to.sid, to.sid, f.sid, to, amount, 4, 1, 0x20
+    sload                                       # balanceOf[to], to.sid, f.sid, to, amount, 4, 1, 0x20
 
-    dup6                                        # amount, balanceOf[to], to.sid, f.sid, from, to, amount, return_pc
-    add                                         # amount + balanceOf[to], to.sid, f.sid, from, to, amount, return_pc
+    dup5                                        # amount, balanceOf[to], to.sid, f.sid, to, amount, 4, 1, 0x20
+    add                                         # amount + balanceOf[to], to.sid, f.sid, to, amount, 4, 1, 0x20
 
-    swap1
-    sstore                                      # f.sid, from, to, amount, return_pc
+    swap1                                       # to.sid, amount + balanceOf[to], f.sid, to, amount, 4, 1, 0x20
+    sstore                                      # f.sid, to, amount, 4, 1, 0x20
 
-    swap3                                       # amount, from, to, f.sid, return_pc
-    returndatasize
-    mstore                                      # from, to, f.sid, return_pc
+    swap2                                       # amount, to, f.sid, 4, 1, 0x20
+    returndatasize                              # 0, amount, to, f.sid, 4, 1, 0x20
+    mstore                                      # to, f.sid, 4, 1, 0x20 | memory: 000...amount
 
-    # emit Transfer(address indexed _from, address indexed _to, uint256 _value);
-    push32 topic("Transfer(address,address,uint256)")
-    push1 0x20
-    returndatasize
-    log3                                        # f.sid, return_pc
+    swap1                                       # f.sid, to, 4, 1, 0x20 | memory: 000...amount
 
-    push1 1
+    dup4                                        # 1, f.sid, to, 4, 1, 0x20 | memory: 000...amount
+    sload                                       # s[1], f.sid, to, 4, 1, 0x20 | memory: 000...amount
+    dup6                                        # 0x20, s[1], f.sid, to, 4, 1, 0x20 | memory: 000...amount
+    returndatasize                              # 0, 0x20, s[1], f.sid, to, 4, 1, 0x20 | memory: 000...amount
+    log3                                        # 4, 1, 0x20 | memory: 000...amount
+
+    dup2                                        # 1, 4, 1, 0x20 | memory: 000...amount
     %push(returnValue)
     jump
 

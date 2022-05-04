@@ -1,11 +1,18 @@
 # @author @sw0nt - Saw-mon and Natalie
 # @notice https://eips.ethereum.org/EIPS/eip-20
 
+push1 0x20
+push1 1
+pc                                           # stack: 4, 1, 0x20
+
 %import("macros/instructions.etk")
 
 # storage slots
-# 0: maping(address => uint256) balanceOf
-# 1: mapping(address => mapping(address => uint256)) allowance
+#                            slot: value
+#                               0: topic("Approval(address,address,uint256)")
+#                               1: topic("Transfer(address,address,uint256)")
+#                         address: balanceOf[address]
+# sha3(000...owner 000...spender): allowance[owner][spender]
 
 %import("function_selector.etk")
                                                 # 4 byte sig
@@ -24,16 +31,18 @@
 # %import("functions/_mint.etk")
 # %import("functions/_burn.etk")
 
+# stack: value, 4, 1, 0x20
 returnValue:
     jumpdest
 
-    returndatasize
-    mstore
+    returndatasize                              # 0, value, 4, 1, 0x20
+    mstore                                      # 4, 1, 0x20 | memory: 000...value
 
-    push1 0x20
-    returndatasize
+    dup3                                        # 0x20, 4, 1, 0x20
+    returndatasize                              # 0, 0x20, 4, 1, 0x20
     return
 
+# stack is irrelevant
 error:
     jumpdest
 

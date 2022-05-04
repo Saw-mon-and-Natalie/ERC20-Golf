@@ -1,31 +1,40 @@
-# stack: final jump dest            # stack
+# stack: 4, 1, 0x20                 # stack
 approve:
     jumpdest
 
     # spender
-    %calldata_param(0)              # to
-    %calldata_param(1)              # amount, to
+    dup1                            # 4, 4, 1, 0x20
+    calldataload                    # to, 4, 1, 0x20
+    push1 36
+    calldataload                    # amount, to, 4, 1, 0x20
 
     # save amount to memory to for log3 data value
-    dup1                            # amount, amount ,to
-    dup3                            # to, amount, amount, to
-
-    caller
-    %allowance_slot()               # a.sid, amount, amount, to
-
-    sstore                          # amount, to
+    dup1                            # amount, amount, to, 4, 1, 0x20
+    dup3                            # to, amount, amount, to, 4, 1, 0x20
+    caller                          # msg.sender, to, amount, amount, to, 4, 1, 0x20
 
     returndatasize
-    mstore                          # to
+    mstore                          # to, amount, amount, to, 4, 1, 0x20 | memory: 000...caller
+
+    msize
+    mstore                          # amount, amount, to, 4, 1, 0x20 | memory: 000...caller 000...to
+
+    %allowance_slot()               # a.sid, amount, amount, to, 4, 1, 0x20
+
+    sstore                          # amount, to, 4, 1, 0x20
+
+    returndatasize
+    mstore                          # to, 4, 1, 0x20 | memory: 000...amount 000...to
 
 
-    caller
+    caller                          # caller, to, 4, 1, 0x20 | memory: 000...amount 000...to
     # emit Approval(address indexed _owner, address indexed _spender, uint256 _value)
-    push32 topic("Approval(address,address,uint256)")
-    push1 0x20
     returndatasize
-    log3
+    sload                           # s[0], caller, to, 4, 1, 0x20 | memory: 000...amount 000...to
+    dup6                            # 0x02, s[0], caller, to, 4, 1, 0x20 | memory: 000...amount 000...to
+    returndatasize                  # 0, 0x20, s[0], caller, to, 4, 1, 0x20 | memory: 000...amount 000...to
+    log3                            # 4, 1, 0x20 | memory: 000...amount 000...to
 
-    push1 1
+    dup2                            # 1, 4, 1, 0x20 | memory: 000...amount 000...to
     %push(returnValue)
     jump

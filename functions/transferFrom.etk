@@ -1,31 +1,41 @@
-# stack: return_pc
+# stack: 4, 1, 0x20 
 transferFrom:
     jumpdest
 
-    %calldata_param(2)              # amount, return_pc
-    %calldata_param(1)              # to, amount, return_pc
-    %calldata_param(0)              # from, to, amount, return_pc
+    push1 4 + 2 * 32                # 68, 4, 1, 0x20 
+    calldataload                    # amount, 4, 1, 0x20
+    push1 36
+    calldataload                    # to, amount, 4, 1, 0x20
+    dup3                            # 4, to, amount, 4, 1, 0x20
+    calldataload                    # from, to, amount, 4, 1, 0x20
 
-    caller
-    dup2
-    %allowance_slot()               # a.sid, from, to, amount, return_pc
+    caller                          # msg.sender, from, to, amount, 4, 1, 0x20
+    dup2                            # from, msg.sender, from, to, amount, 4, 1, 0x20
 
-    dup1
-    sload                           # allowance, a.sid, from, to, amount, return_pc
+    returndatasize                  # 0, from, msg.sender, from, to, amount, 4, 1, 0x20
+    mstore                          # msg.sender, from, to, amount, 4, 1, 0x20 | memory: 000...from
 
-    dup1                            # allowance, allowance, a.sid, from, to, amount, return_pc
-    dup6                            # amount, allowance, allowance, a.sid, from, to, amount, return_pc
+    msize                           # 0x20, msg.sender, from, to, amount, 4, 1, 0x20 | memory: 000...from
+    mstore                          # from, to, amount, 4, 1, 0x20 | memory: 000...from 000...caller
+
+    %allowance_slot()               # a.sid, from, to, amount, 4, 1, 0x20
+
+    dup1                            # a.sid, a.sid, from, to, amount, 4, 1, 0x20
+    sload                           # allowance, a.sid, from, to, amount, 4, 1, 0x20
+
+    dup1                            # allowance, allowance, a.sid, from, to, amount, 4, 1, 0x20
+    dup6                            # amount, allowance, allowance, a.sid, from, to, amount, 4, 1, 0x20
     gt
     %push(error)
-    jumpi                           # allowance, a.sid, from, to, amount, return_pc
+    jumpi                           # allowance, a.sid, from, to, amount, 4, 1, 0x20
 
-    dup5
-    swap1
-    sub                             # allowance - amount, a.sid, from, to, amount, return_pc
+    dup5                            # amount, allowance, a.sid, from, to, amount, 4, 1, 0x20
+    swap1                           # allowance, amount, a.sid, from, to, amount, 4, 1, 0x20
+    sub                             # allowance - amount, a.sid, from, to, amount, 4, 1, 0x20
 
-    swap1
-    sstore                          # from, to, amount, return_pc
+    swap1                           # a.sid, allowance - amount, from, to, amount, 4, 1, 0x20
+    sstore                          # from, to, amount, 4, 1, 0x20
 
     %push(transferInternal)
-    # jump
+    jump
 

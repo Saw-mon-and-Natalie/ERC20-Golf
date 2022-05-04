@@ -1,44 +1,21 @@
 # stack: address
 # takes 1, returns 1
+# @dev storage slot for balanceOf[owner] is owner
 %macro balance_of_slot()
-    returndatasize
-    mstore
-
-    returndatasize
-    push1 0x20
-    mstore
-
-    push1 0x40
-    returndatasize
-    keccak256
 %end
 
-# stack: owner, spender
-# takes 1, returns 1
+# stack:
+# memory: 000...owner 000...spender
+# takes 2, returns 1
+# @dev storage slot for allowance[owner][spender] wil be at sha3(000...owner 000...spender)
 %macro allowance_slot()
-    returndatasize
-    mstore
-
     msize
-    push1 0x20
-    mstore
-
-    push1 0x40
-    returndatasize
-    keccak256
-    push1 0x20
-    mstore
-
-    returndatasize
-    mstore
-
-    push1 0x40
     returndatasize
     keccak256
 %end
 
 %macro total_supply()
-    push1 0xff
+    codesize
 %end
 
 %macro decimals()

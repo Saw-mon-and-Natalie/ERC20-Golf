@@ -1,43 +1,15 @@
+# stack: 4, 1, 0x20 
+
 balanceOf:
     jumpdest
-
-    %push(storeAndReturn)
     
     # owner
-    push1 4
-    calldataload
+    dup1                                # 4, 4, 1, 0x20
+    calldataload                        # owner, 4, 1, 0x20
 
-    %push(balanceOfSlot)
-    jump
-    
+    # owner address is also the storage slot id in our case
 
-# stack: address, return_pc
-balanceOfSlot:
-    jumpdest
-
-    returndatasize
-    mstore
-
-    # storage slot 0
-    returndatasize
-    msize
-    mstore
-
-    msize
-    returndatasize
-    keccak256
-    
-    swap1
-    jump
-
-storeAndReturn:
-    jumpdest
-
-    sload
+    sload                               # b[..], 4, 1, 0x20
    
-    returndatasize
-    mstore
-
-    push1 0x20
-    returndatasize
-    return
+    %push(returnValue)
+    jump                                # b[..], 4, 1, 0x20

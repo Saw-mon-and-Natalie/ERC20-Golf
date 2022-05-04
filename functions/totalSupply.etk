@@ -1,6 +1,8 @@
+# input stack not important
+# stack: 4, 1, 0x20
 totalSupply:
     jumpdest
-    %total_supply()
+    %total_supply() # total_supply, 4, 1, 0x20
     
     %push(returnValue)
     jump
