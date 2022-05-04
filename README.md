@@ -21,7 +21,7 @@ Benchmark for modified [funky-optimizations](https://github.com/Saw-mon-and-Nata
 |---|---|
 |273 bytes|187 bytes|
 
-Deployed funky optimized contract on Rinkeby: [0x8b38be1ff7c640079acc30833148055086631a1e](https://rinkeby.etherscan.io/address/0x8b38be1ff7c640079acc30833148055086631a1e)
+Deployed funky optimized contract on Rinkeby: [`0x8b38be1ff7c640079acc30833148055086631a1e`](https://rinkeby.etherscan.io/address/0x8b38be1ff7c640079acc30833148055086631a1e)
 
 ## Notes
 - event topics are not stored in storage for gas optimization
